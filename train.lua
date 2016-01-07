@@ -27,6 +27,7 @@ local LSTM = require 'model.LSTM'
 local GRU = require 'model.GRU'
 local GRUr = require 'model.GRUr'
 local RNN = require 'model.RNN'
+local HighwayMLP = require 'model.HighwayMLP'
 
 cmd = torch.CmdLine()
 cmd:text()
@@ -38,7 +39,7 @@ cmd:option('-data_dir','data/tinyshakespeare','data directory. Should contain th
 -- model params
 cmd:option('-rnn_size', 128, 'size of LSTM internal state')
 cmd:option('-num_layers', 2, 'number of layers in the LSTM')
-cmd:option('-model', 'lstm', 'lstm,gru,grur or rnn')
+cmd:option('-model', 'lstm', 'lstm,gru,grur,hwmlp or rnn')
 -- optimization
 cmd:option('-learning_rate',2e-3,'learning rate')
 cmd:option('-learning_rate_decay',0.97,'learning rate decay')
@@ -153,6 +154,8 @@ else
         protos.rnn = GRUr.grur(vocab_size, opt.rnn_size, opt.num_layers, opt.dropout)
     elseif opt.model == 'rnn' then
         protos.rnn = RNN.rnn(vocab_size, opt.rnn_size, opt.num_layers, opt.dropout)
+    elseif opt.model == 'hwmlp' then
+        protos.rnn = HighwayMLP.mlp(vocab_size, opt.num_layers)
     end
     protos.criterion = nn.ClassNLLCriterion()
 end
